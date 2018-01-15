@@ -1,7 +1,7 @@
 ### cloudformation-elb-proxyprotocol
 Cloudformation template ELB->ECS->nodejs to get the client ip address using proxy protocol 
 
-##### Components
+###### Components
 - **nodejs-app** sample nodejs app deployed to docker hub [awspilotcom/test-elb-proxyprotocol](https://hub.docker.com/r/awspilotcom/test-elb-proxyprotocol/)
 - **cloudformation-template** 
 
