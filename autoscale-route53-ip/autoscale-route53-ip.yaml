@@ -1,0 +1,27 @@
+AWSTemplateFormatVersion: 2010-09-09
+Resources:
+
+    AutoscaleToRoute53Role:
+        Type: AWS::IAM::Role
+        Properties:
+          AssumeRolePolicyDocument:
+            Version: 2012-10-17
+            Statement:
+            - Effect: Allow
+              Principal: {Service: [lambda.amazonaws.com]}
+              Action: ['sts:AssumeRole']
+          Path: /
+          ManagedPolicyArns:
+          - "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+          Policies:
+          - PolicyName: S3Policy
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+                - Effect: Allow
+                  Sid: AccessToEC2andRoute53
+                  Action:
+                    - 'EC2:*'
+                    - 'autoscaling:*'
+                    - 'route53:*'
+                  Resource: '*'
