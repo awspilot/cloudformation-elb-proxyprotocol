@@ -1,5 +1,21 @@
 AWSTemplateFormatVersion: 2010-09-09
+Parameters:
+    InstanceType:
+        Type: String
+        Default: t1.micro
+        Description: Instance Type
+
+    AMI:
+        Type: String
+        Description: Select AMI for your region https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs-optimized_AMI.html
 Resources:
+
+    MyLaunchConfig:
+        Type: AWS::AutoScaling::LaunchConfiguration
+        Properties:
+          ImageId: !Ref AMI
+          InstanceType: !Ref InstanceType
+
 
     AutoscaleToRoute53Role:
         Type: AWS::IAM::Role
