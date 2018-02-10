@@ -147,3 +147,22 @@ Resources:
                             });
                         })
                     };
+
+    TaskAutoscaleToRoute53Function:
+        Type: AWS::Events::Rule
+        Properties:
+            Description: CloudFormation
+            ScheduleExpression: rate(1 minute)
+            Name: task-autoscale-to-route53
+            Targets:
+              - Arn: !GetAtt AutoscaleToRoute53Function.Arn
+                Id: TaskAutoscaleToRoute53Function
+                Input: '{}'
+
+    PermissionTaskAutoscaleToRoute53Function:
+      Type: AWS::Lambda::Permission
+      Properties:
+        FunctionName: !Ref AutoscaleToRoute53Function
+        Action: lambda:InvokeFunction
+        Principal: events.amazonaws.com
+        SourceArn: !GetAtt TaskAutoscaleToRoute53Function.Arn
