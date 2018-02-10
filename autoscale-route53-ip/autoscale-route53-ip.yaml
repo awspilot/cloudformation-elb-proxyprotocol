@@ -8,6 +8,12 @@ Parameters:
     AMI:
         Type: String
         Description: Select AMI for your region https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs-optimized_AMI.html
+
+    AutoscaleInstances:
+        Type: Number
+        Default: 2
+        Description: Numer of instances in Autoscaling group
+
 Resources:
 
     MyLaunchConfig:
@@ -16,6 +22,16 @@ Resources:
           ImageId: !Ref AMI
           InstanceType: !Ref InstanceType
 
+
+
+    MyAutoscalingGroup:
+        Type: AWS::AutoScaling::AutoScalingGroup
+        Properties:
+          AvailabilityZones: !GetAZs ''
+          LaunchConfigurationName: !Ref MyLaunchConfig
+          MinSize: 1
+          MaxSize: 6
+          DesiredCapacity: !Ref AutoscaleInstances
 
     AutoscaleToRoute53Role:
         Type: AWS::IAM::Role
