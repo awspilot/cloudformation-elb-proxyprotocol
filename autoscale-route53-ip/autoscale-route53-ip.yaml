@@ -14,6 +14,16 @@ Parameters:
         Default: 2
         Description: Numer of instances in Autoscaling group
 
+
+    Route53Zone:
+        Type: String
+        Default: 'XXXXXXXXXXXXX'
+        Description: Find the coresponding zone id for 'mydomain.com'
+
+    FQDN:
+        Type: String
+        Description: Eg. chatserver.mydomain.com
+
 Resources:
 
     MyLaunchConfig:
@@ -57,3 +67,83 @@ Resources:
                     - 'autoscaling:*'
                     - 'route53:*'
                   Resource: '*'
+
+
+
+    AutoscaleToRoute53Function:
+        Type: AWS::Lambda::Function
+        Properties:
+            FunctionName: webproxy-to-route53
+            MemorySize: 128
+            Handler: index.handler
+            Role: !GetAtt AutoscaleToRoute53Role.Arn
+            Runtime: nodejs4.3
+            Timeout: 300
+            Environment:
+                Variables:
+                    group_name: !Ref MyAutoscalingGroup
+                    zone_id: !Ref Route53Zone
+                    fqdn: !Ref FQDN
+            Code:
+                ZipFile:
+                    |
+                    console.log('Loading function');
+                    var AWS = require('aws-sdk');
+                    var autoscaling = new AWS.AutoScaling();
+                    var ec2 = new AWS.EC2( { apiVersion: '2016-11-15'});
+                    var route53 = new AWS.Route53();
+                    exports.handler = function(event, context) {
+                        var params = {
+                            AutoScalingGroupNames: [ process.env.group_name ]
+                        };
+                        autoscaling.describeAutoScalingGroups(params, function(err, data) {
+                            if (err)
+                                return context.done(err)
+
+                            if (!(data.AutoScalingGroups || []).length)
+                                return context.done('autoscaling-group-not-found')
+
+                            var instances = (data.AutoScalingGroups[0].Instances || []).map(function(i) { return i.InstanceId})
+                            console.log(process.env.group_name, " instances ", instances )
+                            if (!instances.length)
+                                return context.done('autoscaling-group-no-instances');
+
+                            ec2.describeInstances({ InstanceIds: instances, }, function(err, data) {
+                                if (err)
+                                    return context.done(err)
+
+                                console.log("described instances", data.Reservations )
+
+                                var ip_addresses = [];
+                                (data.Reservations || []).map(function(R) {
+                                    ;(R.Instances || []).filter(function(i) { return i.hasOwnProperty('PublicIpAddress') }).map(function(i) { ip_addresses.push( i.PublicIpAddress )})
+                                });
+
+                                console.log(ip_addresses)
+
+                                var params = {
+                                    ChangeBatch: {
+                                        Changes: [
+                                            {
+                                                Action: "UPSERT",
+                                                ResourceRecordSet: {
+                                                    Name: process.env.fqdn,
+                                                    ResourceRecords: ip_addresses.map(function(ip) { return {Value: ip } }),
+                                                    TTL: 60,
+                                                    Type: "A"
+                                                }
+                                            }
+                                        ],
+                                    },
+                                    HostedZoneId: process.env.zone_id
+                                };
+                                 route53.changeResourceRecordSets(params, function(err, data) {
+                                    if (err)
+                                        return context.done(err)
+
+
+                                    context.done(null, ip_addresses );
+                                 });
+                            });
+                        })
+                    };
