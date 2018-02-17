@@ -1,5 +1,6 @@
 {
 	"dependencies": {
+		"cfn-response": "*",
 		"request": "*"
 	}
 }
