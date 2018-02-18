@@ -1,6 +1,9 @@
 
 var AWS = require('aws-sdk');
+var request = require('request');
+
 const response = require('cfn-response');
+
 exports.handler = function(event, context) {
 
 	console.log("event=",event)
@@ -22,7 +25,18 @@ exports.handler = function(event, context) {
 
 	var request_uri = 'https://api.awspilot.com/cf/v1/' + resource
 
-	console.log(methods, request_uri )
+	console.log(method, request_uri )
 
-	return response.send(event, context, response.SUCCESS, {Value: 'test'} );
+	var headersOpt = { "content-type": "application/json", };
+	request({
+		method:method,
+		url: request_uri,
+		form: event.ResourceProperties,
+		headers: headersOpt,
+		json: true,
+	}, function (err, response, body) {
+		console.log("got reply from api ", body, err );
+		return response.send(event, context, response.SUCCESS, {err: err, body: body } );
+	});
+
 };
