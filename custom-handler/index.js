@@ -2,13 +2,13 @@
 var AWS = require('aws-sdk');
 var request = require('request');
 
-const response = require('cfn-response');
+const cfn = require('cfn-response');
 
 exports.handler = function(event, context) {
 
 	console.log("event=",event)
 	if (['Create','Update', 'Delete'].indexOf(event.RequestType) === -1 )
-		return response.send(event, context, response.FAILED, { errorMessage: 'invalid RequestType'} );
+		return cfn.send(event, context, cfn.FAILED, { errorMessage: 'invalid RequestType'} );
 
 	var methods = { create: 'PUT', update: 'POST', delete: 'DELETE' }
 
@@ -20,7 +20,7 @@ exports.handler = function(event, context) {
 			break;
 		default:
 			// unknown resource type
-			return response.send(event, context, response.FAILED, { errorMessage: 'unhandled ResourceType'} );
+			return cfn.send(event, context, cfn.FAILED, { errorMessage: 'unhandled ResourceType'} );
 	}
 
 	var request_uri = 'https://api.awspilot.com/cf/v1/' + resource
@@ -36,7 +36,7 @@ exports.handler = function(event, context) {
 		json: true,
 	}, function (err, r, body) {
 		console.log("got reply from api ", body, err );
-		return response.send(event, context, response.SUCCESS, {err: err, body: body } );
+		return cfn.send(event, context, cfn.SUCCESS, {err: err, body: body } );
 	});
 
 };
