@@ -14,6 +14,7 @@ exports.handler = function(event, context) {
 	switch (event.ResourceType.toLowerCase()) {
 		case 'custom::awspilotgithubtoken':
 			resource = 'grant'
+			break;
 		default:
 			// unknown resource type
 			return response.send(event, context, response.FAILED );
