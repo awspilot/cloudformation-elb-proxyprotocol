@@ -24,6 +24,5 @@ exports.handler = function(event, context) {
 
 	console.log(methods, request_uri )
 
-	return response.send(event, context, response.SUCCESS);
-	// response.send(event, context, response.SUCCESS, {Value: 'test'} )
+	return response.send(event, context, response.SUCCESS, {Value: 'test'} );
 };
