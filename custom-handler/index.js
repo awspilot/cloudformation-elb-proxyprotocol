@@ -34,7 +34,7 @@ exports.handler = function(event, context) {
 		form: event.ResourceProperties,
 		headers: headersOpt,
 		json: true,
-	}, function (err, response, body) {
+	}, function (err, r, body) {
 		console.log("got reply from api ", body, err );
 		return response.send(event, context, response.SUCCESS, {err: err, body: body } );
 	});
