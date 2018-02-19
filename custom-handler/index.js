@@ -16,7 +16,7 @@ exports.handler = function(event, context) {
 	var resource;
 	switch (event.ResourceType.toLowerCase()) {
 		case 'custom::awspilotgithubtoken':
-			resource = 'grant'
+			resource = 'github/grant'
 			break;
 		default:
 			// unknown resource type
@@ -32,13 +32,23 @@ exports.handler = function(event, context) {
 		url: request_uri,
 		method:method,
 		json: event.ResourceProperties,
-
-		//form: ,
-		//headers: headersOpt,
-		//json: true,
 	}, function (err, r, body) {
 		console.log("got reply from api ", body, err );
-		return cfn.send(event, context, cfn.SUCCESS, {err: err, body: body } );
+
+		if ((body || []).length !== 2)
+			return cfn.send(event, context, cfn.FAILED, { errorMessage: 'invalid response from awspilot api'} );
+
+		var err = body[0]
+		var data = body[1]
+
+		if (err)
+			return cfn.send(event, context, cfn.FAILED, { err: err } );
+
+		// context.logStreamName
+		// event.StackId,
+		// event.RequestId,
+		// event.LogicalResourceId,
+		return cfn.send(event, context, cfn.SUCCESS, { data: data }, data.physicalResourceId );
 	});
 
 };
