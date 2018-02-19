@@ -29,11 +29,13 @@ exports.handler = function(event, context) {
 
 	var headersOpt = { "content-type": "application/json", };
 	request({
-		method:method,
 		url: request_uri,
-		form: event.ResourceProperties,
-		headers: headersOpt,
-		json: true,
+		method:method,
+		json: event.ResourceProperties,
+
+		//form: ,
+		//headers: headersOpt,
+		//json: true,
 	}, function (err, r, body) {
 		console.log("got reply from api ", body, err );
 		return cfn.send(event, context, cfn.SUCCESS, {err: err, body: body } );
