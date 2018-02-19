@@ -31,7 +31,7 @@ exports.handler = function(event, context) {
 	request({
 		url: request_uri,
 		method:method,
-		json: event.ResourceProperties,
+		json: event,
 	}, function (err, r, body) {
 		console.log("got reply from api ", body, err );
 
