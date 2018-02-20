@@ -1,0 +1,41 @@
+AWSTemplateFormatVersion: 2010-09-09
+Parameters:
+    S3DeployBucketName:
+        Type: String
+        Description: S3 Bucket where Awspilot will put the deployment .zip files Ex. YOURORG-deployments
+    IAMUser:
+        Type: String
+        Default: awspilot
+        Description: IAM user in your aws account that will have access to put zip files into S3DeployBucketName s3 bucket
+
+
+Resources:
+    DeploymentBucket:
+        Type: AWS::S3::Bucket
+        Properties:
+            BucketName: !Ref S3DeployBucketName
+
+    AwspilotIamUser:
+      Type: AWS::IAM::User
+      Properties:
+        Path: /
+        UserName: !Ref IAMUser
+        Policies:
+        - PolicyName: s3deplymentbucketaccess
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+               - Effect: Allow
+                 Sid: AccessToPutDeployZip
+                 Action:
+                   - S3:*
+                 Resource: !Sub
+                    - arn:aws:s3:::${deploybucket}/*
+                    - { deploybucket: !Ref S3DeployBucketName }
+
+    AwspilotIamUserKey:
+        Type: AWS::IAM::AccessKey
+        Properties:
+            UserName: !Ref AwspilotIamUser
+
+    # WORK IN PROGRESS
