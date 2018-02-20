@@ -15,6 +15,9 @@ exports.handler = function(event, context) {
 	var method = methods[ event.RequestType.toLowerCase() ]
 	var resource;
 	switch (event.ResourceType.toLowerCase()) {
+		case 'custom::awspilotaccount':
+			resource = 'account'
+			break;
 		case 'custom::awspilotgithubtoken':
 			resource = 'github/grant'
 			break;
