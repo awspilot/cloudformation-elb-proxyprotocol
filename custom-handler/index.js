@@ -51,7 +51,7 @@ exports.handler = function(event, context) {
 		// event.StackId,
 		// event.RequestId,
 		// event.LogicalResourceId,
-		return cfn.send(event, context, cfn.SUCCESS, { data: data }, data.physicalResourceId );
+		return cfn.send(event, context, cfn.SUCCESS, data, data.physicalResourceId );
 	});
 
 };
