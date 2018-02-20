@@ -54,7 +54,19 @@ Resources:
                 - "arn:aws:iam::aws:policy/CloudWatchLogsFullAccess"
 
 
-
+    Awspilot:
+        Type: AWS::Lambda::Function
+        DependsOn: [ AwspilotLambdaRole ]
+        Properties:
+            FunctionName: awspilot
+            MemorySize: 128
+            Handler: index.handler
+            Role: !GetAtt AwspilotLambdaRole.Arn
+            Runtime: nodejs4.3
+            Timeout: 300
+            Code:
+                S3Bucket: !Join [ '', [ 'awspilot-cf-', !Ref "AWS::Region" ]]
+                S3Key: custom-handler.zip
 
 
     # WORK IN PROGRESS
