@@ -8,6 +8,14 @@ Parameters:
         Default: awspilot
         Description: IAM user in your aws account that will have access to put zip files into S3DeployBucketName s3 bucket
 
+    AwspilotUsername:
+        Type: String
+        Default: you@yourcompany
+        Description: Desired username in the awspilot.com website ( email address )
+    AwspilotPassword:
+        Type: String
+        Description: Password for your awspilot.com account
+
 
 Resources:
     DeploymentBucket:
@@ -68,5 +76,23 @@ Resources:
                 S3Bucket: !Join [ '', [ 'awspilot-cf-', !Ref "AWS::Region" ]]
                 S3Key: custom-handler.zip
 
+    # create an account on awspilot.com website
+    AwspilotAccount:
+        Type: Custom::AwspilotAccount
+        DependsOn: [ Awspilot ]
+        Properties:
+            ServiceToken: !GetAtt Awspilot.Arn
+            Username: !Ref AwspilotUsername
+            Password: !Ref AwspilotPassword
+
+
+
 
     # WORK IN PROGRESS
+
+Outputs:
+    AccountKey:
+        Description: Awspilot Account Key
+        Value: !GetAtt AwspilotAccount.AccessToken
+        Export:
+            Name: AwspilotAccountKey
