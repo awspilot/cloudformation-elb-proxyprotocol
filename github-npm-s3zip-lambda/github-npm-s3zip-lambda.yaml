@@ -16,6 +16,9 @@ Parameters:
         Type: String
         Description: Password for your awspilot.com account
 
+    GithubToken:
+        Type: String
+        Description: Oauth or Personal Access Token, get it from your Github Account
 
 Resources:
     DeploymentBucket:
@@ -83,7 +86,24 @@ Resources:
         Properties:
             ServiceToken: !GetAtt Awspilot.Arn
             Username: !Ref AwspilotUsername
+            # updatable properties
             Password: !Ref AwspilotPassword
+
+    # grant Awspilot access to github account so it can add hook and checkout the source
+    GithubGrant:
+        Type: Custom::AwspilotGithubToken
+        DependsOn: [ Awspilot ]
+        Properties:
+            ServiceToken: !GetAtt Awspilot.Arn
+            AccountKey: !GetAtt AwspilotAccount.AccessToken
+            # updatable properties
+            Name: AccessToGit
+            Token: !Ref GithubToken
+
+
+
+
+
 
 
 
