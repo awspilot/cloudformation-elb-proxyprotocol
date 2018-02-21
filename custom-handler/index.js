@@ -26,7 +26,7 @@ exports.handler = function(event, context) {
 				resource = require('github/repositoryref/' + method.toLowerCase() )
 			} catch (e) {
 				console.log(e)
-				return cfn.send(event, context, cfn.FAILED, { errorMessage: 'unhandled ResourceType'} );
+				return cfn.send(event, context, cfn.FAILED, e );
 			}
 			break;
 		case 'custom::githubrepositoryhook':
