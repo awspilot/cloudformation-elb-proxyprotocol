@@ -18,7 +18,7 @@ module.exports = function( event, context ) {
 		name: 'web',
 		config: {
 			url: 'http://example.com/webhook',
-			content_type: 'json' // form
+			content_type: 'json', // form
 			active: true,
 			//events: ["push","pull_request"]
 			//secret
