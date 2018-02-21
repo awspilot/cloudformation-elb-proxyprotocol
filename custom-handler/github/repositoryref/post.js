@@ -17,6 +17,9 @@ module.exports = function( event, context ) {
 		if (err)
 			return cfn.send(event, context, cfn.FAILED, { errorMessage: JSON.stringify(err) });
 
+		if (!data.hasOwnProperty('id'))
+			return cfn.send(event, context, cfn.FAILED, { errorMessage: data.message || 'Failed Getting Repository' });
+
 		console.log("got repo=", data )
 		var ret = {
 			id: data.id.toString(),
