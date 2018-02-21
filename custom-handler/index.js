@@ -1,5 +1,5 @@
 
-//var AWS = require('aws-sdk');
+async   = require('async');
 request = require('request');
 
 cfn = require('./cfn-response');
@@ -30,7 +30,12 @@ exports.handler = function(event, context) {
 			}
 			break;
 		case 'custom::githubrepositoryhook':
-			resource = 'github/repository/hook'
+			try {
+				resource = require('github/repositoryhook/' + method.toLowerCase() )
+			} catch (e) {
+				console.log(e)
+				return cfn.send(event, context, cfn.FAILED, {errorMessage: JSON.stringify(e)} );
+			}
 			break;
 		case 'custom::awspilotawsgrant':
 			resource = 'aws/grant'
