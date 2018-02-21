@@ -18,6 +18,7 @@ module.exports = function( event, context ) {
 			return cfn.send(event, context, cfn.FAILED, { errorMessage: JSON.stringify(err) });
 
 		var ret = {
+			PhysicalResourceId: data.id,
 			id: data.id,
 			name: data.name,
 			full_name: data.full_name,
