@@ -19,8 +19,7 @@ module.exports = function( event, context ) {
 
 		console.log("got repo=", data )
 		var ret = {
-			PhysicalResourceId: data.id,
-			id: data.id,
+			id: data.id.toString(),
 			name: data.name,
 			full_name: data.full_name,
 			description: data.description,
@@ -28,6 +27,6 @@ module.exports = function( event, context ) {
 			fork: data.fork,
 		}
 		// can not return data -> Response object is too long.
-		return cfn.send(event, context, cfn.SUCCESS, ret, data.id );
+		return cfn.send(event, context, cfn.SUCCESS, ret, ret.id );
 	})
 }
