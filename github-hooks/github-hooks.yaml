@@ -1,0 +1,65 @@
+AWSTemplateFormatVersion: 2010-09-09
+Parameters:
+    GithubToken:
+        Type: String
+        Description: Oauth or Personal Access Token, get one here https://github.com/settings/tokens
+
+    GithubRepositoryName:
+        Type: String
+        Description: user/repository or org/repository
+Resources:
+    AwspilotLambdaRole:
+        Type: AWS::IAM::Role
+        Properties:
+            AssumeRolePolicyDocument:
+                Version: 2012-10-17
+                Statement:
+                - Effect: Allow
+                  Principal: {Service: [lambda.amazonaws.com]}
+                  Action: ['sts:AssumeRole']
+            Path: /
+            ManagedPolicyArns:
+                - "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+                - "arn:aws:iam::aws:policy/CloudWatchLogsFullAccess"
+
+
+    # to get a new version of custom-handler.zip, you need to delete and recreate this resource
+    Awspilot:
+        Type: AWS::Lambda::Function
+        DependsOn: [ AwspilotLambdaRole ]
+        Properties:
+            #FunctionName: awspilot
+            MemorySize: 128
+            Handler: index.handler
+            Role: !GetAtt AwspilotLambdaRole.Arn
+            Runtime: nodejs4.3
+            Timeout: 300
+            Code:
+                S3Bucket: !Join [ '', [ 'awspilot-cf-', !Ref "AWS::Region" ]]
+                S3Key: custom-handler.zip
+
+    # github repository hook
+    GithubRepositoryHook1:
+        Type: Custom::GithubRepositoryHook
+        DependsOn: [ Awspilot ]
+        Properties:
+            ServiceToken: !GetAtt Awspilot.Arn
+            GithubToken: !Ref GithubToken
+            RepositoryName: !Ref GithubRepositoryName
+            Hook:
+                Url: 'https://example.com/hook1'
+                Active: true
+                ContentType: form
+
+
+    GithubRepositoryHook2:
+        Type: Custom::GithubRepositoryHook
+        DependsOn: [ Awspilot ]
+        Properties:
+            ServiceToken: !GetAtt Awspilot.Arn
+            GithubToken: !Ref GithubToken
+            RepositoryName: !Ref GithubRepositoryName
+            Hook:
+                Url: 'https://example.com/hook2'
+                Active: true
+                ContentType: json
