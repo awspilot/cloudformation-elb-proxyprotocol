@@ -17,6 +17,15 @@ module.exports = function( event, context ) {
 		if (err)
 			return cfn.send(event, context, cfn.FAILED, { errorMessage: JSON.stringify(err) });
 
-		return cfn.send(event, context, cfn.SUCCESS, data, data.id );
+		var ret = {
+			id: data.id,
+			name: data.name,
+			full_name: data.full_name,
+			description: data.description,
+			private: data.private,
+			fork: data.fork,
+		}
+		// can not return data -> Response object is too long.
+		return cfn.send(event, context, cfn.SUCCESS, ret, data.id );
 	})
 }
