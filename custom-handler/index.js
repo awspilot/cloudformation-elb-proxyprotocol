@@ -26,7 +26,7 @@ exports.handler = function(event, context) {
 				resource = require('github/repositoryref/' + method.toLowerCase() )
 			} catch (e) {
 				console.log(e)
-				return cfn.send(event, context, cfn.FAILED, e );
+				return cfn.send(event, context, cfn.FAILED, {errorMessage: JSON.stringify(e)} );
 			}
 			break;
 		case 'custom::githubrepositoryhook':
@@ -63,7 +63,7 @@ exports.handler = function(event, context) {
 		var data = body[1]
 
 		if (err)
-			return cfn.send(event, context, cfn.FAILED, { err: err } );
+			return cfn.send(event, context, cfn.FAILED, { errorMessage: JSON.stringify(err) } );
 
 		// context.logStreamName
 		// event.StackId,
