@@ -21,6 +21,13 @@ exports.handler = function(event, context) {
 		case 'custom::awspilotgithubtoken':
 			resource = 'github/grant'
 			break;
+		case 'custom::githubrepository':
+			resource = 'github/repository'
+			break;
+		case 'custom::awspilotawsgrant':
+			resource = 'aws/grant'
+			break;
+
 		default:
 			// unknown resource type
 			return cfn.send(event, context, cfn.FAILED, { errorMessage: 'unhandled ResourceType'} );
