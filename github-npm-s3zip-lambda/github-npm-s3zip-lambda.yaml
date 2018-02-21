@@ -105,7 +105,17 @@ Resources:
 
 
 
-
+    # grant Awspilot access to put .zip file onto your s3
+    AwspilotAWSGrant:
+        Type: Custom::AwspilotAwsGrant
+        DependsOn: [ Awspilot ]
+        Properties:
+            ServiceToken: !GetAtt Awspilot.Arn
+            AccountKey: !GetAtt AwspilotAccount.AccessToken
+            # updatable properties
+            Name: AccessToAwsS3Put
+            AwsAccessKeyId: !Ref AwspilotIamUserKey
+            AwsSecretAccessKey: !GetAtt AwspilotIamUserKey.SecretAccessKey
 
 
     # WORK IN PROGRESS
