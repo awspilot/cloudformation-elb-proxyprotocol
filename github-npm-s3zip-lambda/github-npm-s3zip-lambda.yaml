@@ -130,6 +130,20 @@ Resources:
             Name: !Ref GithubRepositoryName
 
 
+    # github repository hook
+    GithubRepositoryHook1:
+        Type: Custom::GithubRepositoryHook
+        DependsOn: [ Awspilot ]
+        Properties:
+            ServiceToken: !GetAtt Awspilot.Arn
+            GithubToken: !Ref GithubToken
+            RepositoryName: !Ref GithubRepositoryName
+            Hook:
+                Url: 'https://example.com/hook1'
+                Active: true
+                #ContentType: form
+                ContentType: json
+
 
     # WORK IN PROGRESS
 
