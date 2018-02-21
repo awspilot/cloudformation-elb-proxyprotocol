@@ -17,6 +17,7 @@ module.exports = function( event, context ) {
 		if (err)
 			return cfn.send(event, context, cfn.FAILED, { errorMessage: JSON.stringify(err) });
 
+		console.log("got repo=", data )
 		var ret = {
 			PhysicalResourceId: data.id,
 			id: data.id,
