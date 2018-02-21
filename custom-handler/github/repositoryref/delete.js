@@ -1,3 +1,4 @@
+
 module.exports = function( event, context ) {
-	cfn.send(event, context, cfn.FAILED, { errorMessage: "Not Implemented" });
+	return cfn.send(event, context, cfn.SUCCESS, {} );
 }
