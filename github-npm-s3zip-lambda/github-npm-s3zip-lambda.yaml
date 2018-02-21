@@ -18,8 +18,11 @@ Parameters:
 
     GithubToken:
         Type: String
-        Description: Oauth or Personal Access Token, get it from your Github Account
+        Description: Oauth or Personal Access Token, get one here https://github.com/settings/tokens
 
+    GithubRepositoryName:
+        Type: String
+        Description: user/repository or org/repository
 Resources:
     DeploymentBucket:
         Type: AWS::S3::Bucket
@@ -64,7 +67,7 @@ Resources:
                 - "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
                 - "arn:aws:iam::aws:policy/CloudWatchLogsFullAccess"
 
-
+    # to get a new version of custom-handler.zip, you need to delete and recreate this resource
     Awspilot:
         Type: AWS::Lambda::Function
         DependsOn: [ AwspilotLambdaRole ]
@@ -117,10 +120,25 @@ Resources:
             AwsAccessKeyId: !Ref AwspilotIamUserKey
             AwsSecretAccessKey: !GetAtt AwspilotIamUserKey.SecretAccessKey
 
+    # github repository
+    GithubRepository:
+        Type: Custom::GithubRepositoryRef
+        DependsOn: [ Awspilot ]
+        Properties:
+            ServiceToken: !GetAtt Awspilot.Arn
+            GithubToken: !Ref GithubToken
+            Name: !Ref GithubRepositoryName
+
+
 
     # WORK IN PROGRESS
 
 Outputs:
+    RepoId:
+        Description: Repository Id
+        Value: !GetAtt GithubRepository.id
+        Export:
+            Name: RepoId
     AccountKey:
         Description: Awspilot Account Key
         Value: !GetAtt AwspilotAccount.AccessToken
