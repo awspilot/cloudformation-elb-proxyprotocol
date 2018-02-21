@@ -70,10 +70,6 @@ exports.handler = function(event, context) {
 		if (err)
 			return cfn.send(event, context, cfn.FAILED, { errorMessage: JSON.stringify(err) } );
 
-		// context.logStreamName
-		// event.StackId,
-		// event.RequestId,
-		// event.LogicalResourceId,
 		return cfn.send(event, context, cfn.SUCCESS, data, data.physicalResourceId );
 	});
 
