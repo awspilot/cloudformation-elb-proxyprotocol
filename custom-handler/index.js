@@ -1,8 +1,8 @@
 
-var AWS = require('aws-sdk');
-var request = require('request');
+//var AWS = require('aws-sdk');
+request = require('request');
 
-const cfn = require('cfn-response');
+cfn = require('./cfn-response');
 
 exports.handler = function(event, context) {
 
@@ -21,8 +21,13 @@ exports.handler = function(event, context) {
 		case 'custom::awspilotgithubtoken':
 			resource = 'github/grant'
 			break;
-		case 'custom::githubrepository':
-			resource = 'github/repository'
+		case 'custom::githubrepositoryref':
+			try {
+				resource = require('github/repositoryref/' + method.toLowerCase() )
+			} catch (e) {
+				console.log(e)
+				return cfn.send(event, context, cfn.FAILED, { errorMessage: 'unhandled ResourceType'} );
+			}
 			break;
 		case 'custom::githubrepositoryhook':
 			resource = 'github/repository/hook'
@@ -35,6 +40,9 @@ exports.handler = function(event, context) {
 			// unknown resource type
 			return cfn.send(event, context, cfn.FAILED, { errorMessage: 'unhandled ResourceType'} );
 	}
+
+	if (typeof resource === "function")
+		return resource( event, context )
 
 	var request_uri = 'https://api.awspilot.com/cf/v1/' + resource
 
