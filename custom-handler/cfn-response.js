@@ -12,7 +12,7 @@ exports.send = function(event, context, responseStatus, responseData, physicalRe
 
     var responseBody = JSON.stringify({
         Status: responseStatus,
-        Reason: responseStatus === 'FAILED' ? (typeof responseData === 'string' ? responseData : JSON.stringify(responseData, null, "\t" ) ) : "See the details in CloudWatch Log Stream: " + context.logStreamName,
+        Reason: responseStatus === 'FAILED' ? responseData.errorMessage : "See the details in CloudWatch Log Stream: " + context.logStreamName,
         PhysicalResourceId: physicalResourceId || context.logStreamName,
         StackId: event.StackId,
         RequestId: event.RequestId,
