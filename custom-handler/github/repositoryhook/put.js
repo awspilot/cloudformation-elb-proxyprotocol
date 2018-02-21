@@ -17,9 +17,9 @@ module.exports = function( event, context ) {
 	add_github_hook( event.ResourceProperties.RepositoryName , event.ResourceProperties.GithubToken, {
 		name: 'web',
 		config: {
-			url: 'http://example.com/webhook',
-			content_type: 'json', // form
-			active: true,
+			url: event.ResourceProperties.Hook.Url,
+			content_type: event.ResourceProperties.Hook.ContentType, // form
+			active: event.ResourceProperties.Hook.hasOwnProperty('Active') ? event.ResourceProperties.Hook.Active === true : true,
 			//events: ["push","pull_request"]
 			//secret
 			//insecure_ssl
