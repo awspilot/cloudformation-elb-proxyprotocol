@@ -24,6 +24,9 @@ exports.handler = function(event, context) {
 		case 'custom::githubrepository':
 			resource = 'github/repository'
 			break;
+		case 'custom::githubrepositoryhook':
+			resource = 'github/repository/hook'
+			break;
 		case 'custom::awspilotawsgrant':
 			resource = 'aws/grant'
 			break;
