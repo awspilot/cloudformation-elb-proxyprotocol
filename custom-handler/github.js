@@ -38,5 +38,7 @@ get_github_repo = function(repo, token, cb) {
 }
 
 module.exports = {
-	
+	repo_get: get_github_repo,
+	hook_add: add_github_hook,
+	hook_delete: delete_github_hook,
 }
