@@ -8,6 +8,8 @@ Parameters:
         Type: String
         Description: user/repository or org/repository
 Resources:
+
+    # allow lambda to write to cloudwatch roles, nothing else needed
     AwspilotLambdaRole:
         Type: AWS::IAM::Role
         Properties:
@@ -19,7 +21,6 @@ Resources:
                   Action: ['sts:AssumeRole']
             Path: /
             ManagedPolicyArns:
-                - "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
                 - "arn:aws:iam::aws:policy/CloudWatchLogsFullAccess"
 
 
