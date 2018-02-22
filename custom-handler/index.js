@@ -3,6 +3,7 @@ async   = require('async');
 request = require('request');
 
 cfn = require('./cfn-response');
+github = require('./github')
 
 exports.handler = function(event, context) {
 
