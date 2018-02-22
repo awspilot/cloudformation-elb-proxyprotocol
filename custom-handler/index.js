@@ -15,12 +15,21 @@ exports.handler = function(event, context) {
 	var method = methods[ event.RequestType.toLowerCase() ]
 	var resource;
 	switch (event.ResourceType.toLowerCase()) {
+		// handled by awspilot api
 		case 'custom::awspilotaccount':
 			resource = 'account'
 			break;
 		case 'custom::awspilotgithubtoken':
 			resource = 'github/grant'
 			break;
+		case 'custom::awspilotawsgrant':
+			resource = 'aws/grant'
+			break;
+		case 'custom::awspilotdeploymentgithubs3zip':
+			resource = 'deployment/github/s3zip'
+			break;
+
+		// handled localy
 		case 'custom::githubrepositoryref':
 			try {
 				resource = require('github/repositoryref/' + method.toLowerCase() )
@@ -37,9 +46,7 @@ exports.handler = function(event, context) {
 				return cfn.send(event, context, cfn.FAILED, {errorMessage: JSON.stringify(e)} );
 			}
 			break;
-		case 'custom::awspilotawsgrant':
-			resource = 'aws/grant'
-			break;
+
 
 		default:
 			// unknown resource type
@@ -59,7 +66,6 @@ exports.handler = function(event, context) {
 		method:method,
 		json: event,
 	}, function (err, r, body) {
-		console.log("got reply from api ", body, err );
 
 		if ((body || []).length !== 2)
 			return cfn.send(event, context, cfn.FAILED, { errorMessage: 'invalid response from awspilot api'} );
