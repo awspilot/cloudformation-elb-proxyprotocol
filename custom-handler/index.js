@@ -48,7 +48,6 @@ exports.handler = function(event, context) {
 			}
 			break;
 
-
 		default:
 			// unknown resource type
 			return cfn.send(event, context, cfn.FAILED, { errorMessage: 'unhandled ResourceType'} );
